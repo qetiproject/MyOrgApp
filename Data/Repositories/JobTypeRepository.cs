@@ -1,7 +1,7 @@
-﻿using MyOrgApp.Models;
-using System;
+﻿using Microsoft.EntityFrameworkCore;
+using MyOrgApp.Interfaces;
+using MyOrgApp.Models;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace MyOrgApp.Data.Repositories
@@ -24,14 +24,9 @@ namespace MyOrgApp.Data.Repositories
             odc.JobTypes.Remove(jobType);
         }
 
-        public Task<IEnumerable<JobType>> GetJobTypes()
+        public async Task<IEnumerable<JobType>> GetJobTypes()
         {
-            throw new NotImplementedException();
-        }
-
-        public Task<bool> Save()
-        {
-            throw new NotImplementedException();
+            return await odc.JobTypes.ToListAsync();
         }
     }
 }

@@ -1,7 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using MyOrgApp.Data;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
+using MyOrgApp.DTOs;
+using MyOrgApp.Interfaces;
 using MyOrgApp.Models;
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace MyOrgApp.Controllers
@@ -10,10 +15,12 @@ namespace MyOrgApp.Controllers
     [ApiController]
     public class jobTypeController : ControllerBase
     {
-        private OrganizationDBContext odc;
-        public jobTypeController(OrganizationDBContext odc)
+        private readonly IUOW uow;
+        private readonly IMapper mapper;
+        public jobTypeController(IUOW uow, IMapper mapper)
         {
-            this.odc = odc;
+            this.uow = uow;
+            this.mapper = mapper;
         }
 
         [Route("GetjobTypes")]
@@ -21,36 +28,39 @@ namespace MyOrgApp.Controllers
         [HttpGet]
         public async Task<IActionResult> GetjobTypes()
         {
-            var jobTypes = await odc.JobTypes.ToListAsync();
-            return Ok(jobTypes);
+            var jobTypes = await uow.JobTypeRepository.GetJobTypes();
+            var jobTypesDto = mapper.Map<IEnumerable<JobTypeDTO>>(jobTypes);
+            //var jobTypesDto = from j in jobTypes select new JobTypeDTO()
+            //{
+            //    Id = j.Id,
+            //    Name = j.Name
+            //};
+            return Ok(jobTypesDto);
         }
 
-        //POST api/jobType/add?jobTypeName=development2
-        //POST api/jobType/add/{jobTypeName}
-        [HttpPost("create/{jobTypeName}")]
-        public async Task<IActionResult> CreateJobType(string jobTypeName)
+        [HttpPost]
+        public async Task<IActionResult> CreateJobType(JobTypeDTO jobTypeDto)
         {
-            JobType jobType = new JobType();
-            jobType.Name = jobTypeName;
-            await odc.JobTypes.AddAsync(jobType);
-            await odc.SaveChangesAsync();
-            return Ok(jobType);
+            var jobType = mapper.Map<JobType>(jobTypeDto);
+            jobType.LastUpdatedBy = 1;
+            jobType.LastUpdatedOn = DateTime.Now;
+            //var jobType = new JobType
+            //{
+            //    Name = jobTypeDto.Name,
+            //    LastUpdatedBy = 1,
+            //    LastUpdatedOn = DateTime.Now
+            //};
+
+            uow.JobTypeRepository.CreatejobType(jobType);
+            await uow.Save();
+            return StatusCode(200);
         }
 
-        [HttpPost("create")]
-        public async Task<IActionResult> CreateJobType(JobType jobType)
-        {
-            await odc.JobTypes.AddAsync(jobType);
-            await odc.SaveChangesAsync();
-            return Ok(jobType);
-        }
-
-        [HttpPost("delete{id}")]
+        [HttpDelete("delete/{id}")]
         public async Task<IActionResult> DeleteJobType(int id)
         {
-            var jobType = await odc.JobTypes.FindAsync(id);
-            odc.JobTypes.Remove(jobType);
-            await odc.SaveChangesAsync();
+            uow.JobTypeRepository.DeletejobType(id);
+            await uow.Save();
             return Ok(id);
         }
     }
