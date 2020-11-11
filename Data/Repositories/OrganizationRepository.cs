@@ -8,40 +8,28 @@ using System.Threading.Tasks;
 
 namespace MyOrgApp.Data.Repositories
 {
-    public class JobTypeRepository : IJobTypeRepository
+    public class OrganizationRepository : IOrganizationRepository
     {
         private readonly OrganizationDBContext _odc;
         private readonly IMapper _mapper;
 
-        public JobTypeRepository(OrganizationDBContext odc, IMapper mapper)
+        public OrganizationRepository(OrganizationDBContext odc, IMapper mapper)
         {
             _odc = odc;
             _mapper = mapper;
         }
-
-        public void CreatejobType(JobType jobType)
+        public async Task<Result> GetOrganizations()
         {
-           _odc.JobTypes.AddAsync(jobType);
-        }
-
-        public void DeletejobType(int jobTypeId)
-        {
-            var jobType = _odc.JobTypes.Find(jobTypeId);
-            _odc.JobTypes.Remove(jobType);
-        }
-
-        public async Task<Result> GetJobTypes()
-        {
-            List<JobType> dbResult = new List<JobType>();
+            List<Organization> dbResult = new List<Organization>();
             Result result = new Result();
 
             try
             {
-                dbResult = await _odc.JobTypes.ToListAsync();
-                List<JobTypeDTO> jobTypesDto = _mapper.Map<List<JobTypeDTO>>(dbResult);
-                
+                dbResult = await _odc.Organizations.ToListAsync();
+                List<OrganizationDTO> organizationDto = _mapper.Map<List<OrganizationDTO>>(dbResult);
+
                 result.Success = true;
-                result.Data = jobTypesDto;
+                result.Data = organizationDto;
             }
             catch (System.Exception ex)
             {

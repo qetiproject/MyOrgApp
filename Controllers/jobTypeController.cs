@@ -4,9 +4,6 @@ using MyOrgApp.DTOs;
 using MyOrgApp.Interfaces;
 using MyOrgApp.Models;
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace MyOrgApp.Controllers
@@ -26,16 +23,18 @@ namespace MyOrgApp.Controllers
         [Route("GetjobTypes")]
         //GET api/jobType
         [HttpGet]
-        public async Task<IActionResult> GetjobTypes()
+        public async Task<Result> GetjobTypes()
         {
-            var jobTypes = await uow.JobTypeRepository.GetJobTypes();
-            var jobTypesDto = mapper.Map<IEnumerable<JobTypeDTO>>(jobTypes);
+            Result jobTypes = await uow.JobTypeRepository.GetJobTypes();
+           // var jobTypesDto = mapper.Map<IEnumerable<JobTypeDTO>>(jobTypes);
             //var jobTypesDto = from j in jobTypes select new JobTypeDTO()
             //{
             //    Id = j.Id,
             //    Name = j.Name
             //};
-            return Ok(jobTypesDto);
+           // result.Data = jobTypesDto;
+
+            return jobTypes;
         }
 
         [HttpPost]

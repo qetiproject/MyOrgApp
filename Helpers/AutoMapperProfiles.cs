@@ -9,6 +9,12 @@ namespace MyOrgApp.Helpers
         public AutoMapperProfiles()
         {
             CreateMap<JobType, JobTypeDTO>().ReverseMap();
+            CreateMap<Organization, OrganizationDTO>()
+                .ForMember(dest =>
+                    dest.JobTypeId,
+                    opt => opt.MapFrom(src =>
+                    src.JobTypeId
+                ));
         }
     }
 }
