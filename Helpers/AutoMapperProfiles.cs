@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using MyOrgApp.DTOs;
 using MyOrgApp.Models;
+using System.Linq;
 
 namespace MyOrgApp.Helpers
 {

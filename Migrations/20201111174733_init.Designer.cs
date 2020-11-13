@@ -10,8 +10,8 @@ using MyOrgApp.Data;
 namespace MyOrgApp.Migrations
 {
     [DbContext(typeof(OrganizationDBContext))]
-    [Migration("20201111123658_Org")]
-    partial class Org
+    [Migration("20201111174733_init")]
+    partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -37,12 +37,7 @@ namespace MyOrgApp.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("OrgJobTypeId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("OrgJobTypeId");
 
                     b.ToTable("JobTypes");
                 });
@@ -64,6 +59,8 @@ namespace MyOrgApp.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("JobTypeId");
 
                     b.HasIndex("OrganizationId");
 
@@ -90,15 +87,14 @@ namespace MyOrgApp.Migrations
                     b.ToTable("Organizations");
                 });
 
-            modelBuilder.Entity("MyOrgApp.Models.JobType", b =>
-                {
-                    b.HasOne("MyOrgApp.Models.OrgJobType", null)
-                        .WithMany("JobTypes")
-                        .HasForeignKey("OrgJobTypeId");
-                });
-
             modelBuilder.Entity("MyOrgApp.Models.OrgJobType", b =>
                 {
+                    b.HasOne("MyOrgApp.Models.JobType", "JobType")
+                        .WithMany("OrgJobTypes")
+                        .HasForeignKey("JobTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("MyOrgApp.Models.Organization", null)
                         .WithMany("OrgJobTypes")
                         .HasForeignKey("OrganizationId");

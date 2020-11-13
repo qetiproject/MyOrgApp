@@ -1,7 +1,4 @@
-﻿using MyOrgApp.Models;
-using System.Collections.Generic;
-
-namespace MyOrgApp.DTOs
+﻿namespace MyOrgApp.DTOs
 {
     public class OrganizationDTO
     {

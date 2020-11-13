@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using MyOrgApp.DTOs;
 using MyOrgApp.Interfaces;
 using MyOrgApp.Models;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -18,6 +19,18 @@ namespace MyOrgApp.Data.Repositories
             _odc = odc;
             _mapper = mapper;
         }
+
+        public void CreateOrganization(Organization organization)
+        {
+            _odc.Organizations.AddAsync(organization);
+        }
+
+        public void DeleteOrganization(int orgId)
+        {
+            Organization org = _odc.Organizations.Find(orgId);
+            _odc.Organizations.Remove(org);
+        }
+
         public async Task<Result> GetOrganizations()
         {
             List<Organization> dbResult = new List<Organization>();
